@@ -733,6 +733,32 @@ namespace SDL2
 		public const string SDL_HINT_RENDER_LINE_METHOD =
 			"SDL_RENDER_LINE_METHOD";
 
+		/* Only available in 2.0.22 or higher. */
+		public const string SDL_HINT_FORCE_RAISEWINDOW =
+			"SDL_HINT_FORCE_RAISEWINDOW";
+		public const string SDL_HINT_IME_SUPPORT_EXTENDED_TEXT =
+			"SDL_IME_SUPPORT_EXTENDED_TEXT";
+		public const string SDL_HINT_JOYSTICK_GAMECUBE_RUMBLE_BRAKE =
+			"SDL_JOYSTICK_GAMECUBE_RUMBLE_BRAKE";
+		public const string SDL_HINT_JOYSTICK_ROG_CHAKRAM =
+			"SDL_JOYSTICK_ROG_CHAKRAM";
+		public const string SDL_HINT_MOUSE_RELATIVE_MODE_CENTER =
+			"SDL_MOUSE_RELATIVE_MODE_CENTER";
+		public const string SDL_HINT_MOUSE_AUTO_CAPTURE =
+			"SDL_MOUSE_AUTO_CAPTURE";
+		public const string SDL_HINT_VITA_TOUCH_MOUSE_DEVICE =
+			"SDL_HINT_VITA_TOUCH_MOUSE_DEVICE";
+		public const string SDL_HINT_VIDEO_WAYLAND_PREFER_LIBDECOR =
+			"SDL_VIDEO_WAYLAND_PREFER_LIBDECOR";
+		public const string SDL_HINT_VIDEO_FOREIGN_WINDOW_OPENGL =
+			"SDL_VIDEO_FOREIGN_WINDOW_OPENGL";
+		public const string SDL_HINT_VIDEO_FOREIGN_WINDOW_VULKAN =
+			"SDL_VIDEO_FOREIGN_WINDOW_VULKAN";
+		public const string SDL_HINT_X11_WINDOW_TYPE =
+			"SDL_X11_WINDOW_TYPE";
+		public const string SDL_HINT_QUIT_ON_LAST_WINDOW_CLOSE =
+			"SDL_QUIT_ON_LAST_WINDOW_CLOSE";
+
 		public enum SDL_HintPriority
 		{
 			SDL_HINT_DEFAULT,
@@ -1306,7 +1332,7 @@ namespace SDL2
 		 */
 		public const int SDL_MAJOR_VERSION =	2;
 		public const int SDL_MINOR_VERSION =	0;
-		public const int SDL_PATCHLEVEL =	18;
+		public const int SDL_PATCHLEVEL =	22;
 
 		public static readonly int SDL_COMPILEDVERSION = SDL_VERSIONNUM(
 			SDL_MAJOR_VERSION,
@@ -4211,6 +4237,91 @@ namespace SDL2
 
 		#endregion
 
+		#region SDL_shape.h
+
+		public const int SDL_NONSHAPEABLE_WINDOW = -1;
+		public const int SDL_INVALID_SHAPE_ARGUMENT = -2;
+		public const int SDL_WINDOW_LACKS_SHAPE = -3;
+
+		[DllImport(nativeLibName, EntryPoint = "SDL_CreateShapedWindow", CallingConvention = CallingConvention.Cdecl)]
+		private static unsafe extern IntPtr INTERNAL_SDL_CreateShapedWindow(
+			byte* title,
+			uint x,
+			uint y,
+			uint w,
+			uint h,
+			SDL_WindowFlags flags
+		);
+
+		public static unsafe IntPtr SDL_CreateShapedWindow(string title, uint x, uint y, uint w, uint h, SDL_WindowFlags flags)
+		{
+			byte* utf8Title = Utf8EncodeHeap(title);
+			IntPtr result = INTERNAL_SDL_CreateShapedWindow(utf8Title, x, y, w, h, flags);
+			Marshal.FreeHGlobal((IntPtr)utf8Title);
+			return result;
+		}
+
+		[DllImport(nativeLibName, EntryPoint = "SDL_IsShapedWindow", CallingConvention = CallingConvention.Cdecl)]
+		public static extern SDL_bool SDL_IsShapedWindow(IntPtr window);
+
+		public enum WindowShapeMode
+		{
+			ShapeModeDefault,
+			ShapeModeBinarizeAlpha,
+			ShapeModeReverseBinarizeAlpha,
+			ShapeModeColorKey
+		}
+
+		public static bool SDL_SHAPEMODEALPHA(WindowShapeMode mode)
+		{
+			switch (mode)
+			{
+				case WindowShapeMode.ShapeModeDefault:
+				case WindowShapeMode.ShapeModeBinarizeAlpha:
+				case WindowShapeMode.ShapeModeReverseBinarizeAlpha:
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		[StructLayout(LayoutKind.Explicit)]
+		public struct SDL_WindowShapeParams
+		{
+			[FieldOffset(0)]
+			public byte binarizationCutoff;
+			[FieldOffset(0)]
+			public SDL_Color colorKey;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct SDL_WindowShapeMode
+		{
+			public WindowShapeMode mode;
+			public SDL_WindowShapeParams parameters;
+		}
+
+		[DllImport(nativeLibName, EntryPoint = "SDL_SetWindowShape", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int SDL_SetWindowShape(
+			IntPtr window,
+			IntPtr shape,
+			ref SDL_WindowShapeMode shape_mode
+		);
+
+		[DllImport(nativeLibName, EntryPoint = "SDL_GetShapedWindowMode", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int SDL_GetShapedWindowMode(
+			IntPtr window,
+			out SDL_WindowShapeMode shape_mode
+		);
+
+		[DllImport(nativeLibName, EntryPoint = "SDL_GetShapedWindowMode", CallingConvention = CallingConvention.Cdecl)]
+		public static extern int SDL_GetShapedWindowMode(
+			IntPtr window,
+			IntPtr shape_mode
+		);
+
+		#endregion
+
 		#region SDL_surface.h
 
 		public const uint SDL_SWSURFACE =	0x00000000;
@@ -4746,6 +4857,7 @@ namespace SDL2
 			SDL_TEXTEDITING,
 			SDL_TEXTINPUT,
 			SDL_KEYMAPCHANGED,
+			SDL_TEXTEDITING_EXT,
 
 			/* Mouse events */
 			SDL_MOUSEMOTION = 		0x400,
@@ -4896,6 +5008,17 @@ namespace SDL2
 			public UInt32 timestamp;
 			public UInt32 windowID;
 			public fixed byte text[SDL_TEXTEDITINGEVENT_TEXT_SIZE];
+			public Int32 start;
+			public Int32 length;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public unsafe struct SDL_TextEditingExtEvent
+		{
+			public SDL_EventType type;
+			public UInt32 timestamp;
+			public UInt32 windowID;
+			public IntPtr text; /* char*, free with SDL_free */
 			public Int32 start;
 			public Int32 length;
 		}
@@ -5243,6 +5366,8 @@ namespace SDL2
 			public SDL_KeyboardEvent key;
 			[FieldOffset(0)]
 			public SDL_TextEditingEvent edit;
+			[FieldOffset(0)]
+			public SDL_TextEditingExtEvent editExt;
 			[FieldOffset(0)]
 			public SDL_TextInputEvent text;
 			[FieldOffset(0)]
@@ -6118,6 +6243,12 @@ namespace SDL2
 		/* Stop receiving any text input events, hide onscreen kbd */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
 		public static extern void SDL_StopTextInput();
+
+		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+		public static extern void SDL_ClearComposition();
+
+		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+		public static extern SDL_bool SDL_IsTextInputShown();
 
 		/* Set the rectangle used for text input, hint for IME */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
@@ -8502,6 +8633,8 @@ namespace SDL2
 			public IntPtr egl_window; // Refers to an egl_window*, requires >= 2.0.16
 			public IntPtr xdg_surface; // Refers to an xdg_surface*, requires >= 2.0.16
 			public IntPtr xdg_toplevel; // Referes to an xdg_toplevel*, requires >= 2.0.18
+			public IntPtr xdg_popup;
+			public IntPtr xdg_positioner;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
