@@ -28,4 +28,8 @@
 	<ItemGroup>
 		<None Include="app.config" />
 	</ItemGroup>
+	<PropertyGroup>
+	<!-- Exclude the project from analysis -->
+		<SonarQubeExclude>true</SonarQubeExclude>
+	</PropertyGroup>
 </Project>
