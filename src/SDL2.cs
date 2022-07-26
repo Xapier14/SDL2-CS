@@ -403,6 +403,15 @@ namespace SDL2
 			IntPtr reserved
 		);
 
+		/* Use this function with GDK/GDKX to call your C# Main() function!
+		 * Only available in SDL 2.24.0 or higher.
+		 */
+		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+		public static extern int SDL_GDKRunApp(
+			SDL_main_func mainFunction,
+			IntPtr reserved
+		);
+
 		/* Use this function with iOS to call your C# Main() function!
 		 * Only available in SDL 2.0.10 or higher.
 		 */
@@ -5444,6 +5453,15 @@ namespace SDL2
 			SDL_EventType maxType
 		);
 
+		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+		public static extern unsafe int SDL_PeepEvents(
+			SDL_Event* events,
+			int numevents,
+			SDL_eventaction action,
+			SDL_EventType minType,
+			SDL_EventType maxType
+		);
+
 		/* Checks to see if certain events are in the event queue */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
 		public static extern SDL_bool SDL_HasEvent(SDL_EventType type);
@@ -6489,6 +6507,16 @@ namespace SDL2
 		/* Only available in 2.0.10 or higher. */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
 		public static extern SDL_TouchDeviceType SDL_GetTouchDeviceType(Int64 touchID);
+
+		/* Only available in 2.0.22 or higher. */
+		[DllImport(nativeLibName, EntryPoint = "SDL_GetTouchName", CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr INTERNAL_SDL_GetTouchName(int index);
+
+		/* Only available in 2.0.22 or higher. */
+		public static string SDL_GetTouchName(int index)
+		{
+			return UTF8_ToManaged(INTERNAL_SDL_GetTouchName(index));
+		}
 
 		#endregion
 
