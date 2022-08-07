@@ -312,6 +312,30 @@ namespace SDL2
 
 		#endregion
 
+		#region Additional SVG Support
+
+		/* src refers to an SDL_RWops* */
+		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+		public static extern int IMG_isSVG(
+			IntPtr src
+		);
+
+		/* IntPtr refers to an SDL_Surface*, src refers to an SDL_RWops* */
+		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+		public static extern IntPtr IMG_LoadSVG_RW(
+			IntPtr src
+		);
+		
+		/* IntPtr refers to an SDL_Surface*, src refers to an SDL_RWops* */
+		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+		public static extern IntPtr IMG_LoadSizedSVG_RW(
+			IntPtr src,
+			int width,
+			int height
+		);
+		
+		#endregion
+
 		#endregion
 	}
 }
