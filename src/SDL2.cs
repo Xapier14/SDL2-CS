@@ -403,6 +403,15 @@ namespace SDL2
 			IntPtr reserved
 		);
 
+		/* Use this function with GDK/GDKX to call your C# Main() function!
+		 * Only available in SDL 2.24.0 or higher.
+		 */
+		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+		public static extern int SDL_GDKRunApp(
+			SDL_main_func mainFunction,
+			IntPtr reserved
+		);
+
 		/* Use this function with iOS to call your C# Main() function!
 		 * Only available in SDL 2.0.10 or higher.
 		 */
@@ -5213,7 +5222,7 @@ namespace SDL2
 		[StructLayout(LayoutKind.Sequential)]
 		public struct SDL_ControllerTouchpadEvent
 		{
-			public UInt32 type;
+			public SDL_EventType type;
 			public UInt32 timestamp;
 			public Int32 which; /* SDL_JoystickID */
 			public Int32 touchpad;
@@ -5227,7 +5236,7 @@ namespace SDL2
 		[StructLayout(LayoutKind.Sequential)]
 		public struct SDL_ControllerSensorEvent
 		{
-			public UInt32 type;
+			public SDL_EventType type;
 			public UInt32 timestamp;
 			public Int32 which; /* SDL_JoystickID */
 			public Int32 sensor;
@@ -5242,7 +5251,7 @@ namespace SDL2
 		[StructLayout(LayoutKind.Sequential)]
 		public struct SDL_AudioDeviceEvent
 		{
-			public UInt32 type;
+			public SDL_EventType type;
 			public UInt32 timestamp;
 			public UInt32 which;
 			public byte iscapture;
@@ -5255,7 +5264,7 @@ namespace SDL2
 		[StructLayout(LayoutKind.Sequential)]
 		public struct SDL_TouchFingerEvent
 		{
-			public UInt32 type;
+			public SDL_EventType type;
 			public UInt32 timestamp;
 			public Int64 touchId; // SDL_TouchID
 			public Int64 fingerId; // SDL_GestureID
@@ -5270,7 +5279,7 @@ namespace SDL2
 		[StructLayout(LayoutKind.Sequential)]
 		public struct SDL_MultiGestureEvent
 		{
-			public UInt32 type;
+			public SDL_EventType type;
 			public UInt32 timestamp;
 			public Int64 touchId; // SDL_TouchID
 			public float dTheta;
@@ -5284,7 +5293,7 @@ namespace SDL2
 		[StructLayout(LayoutKind.Sequential)]
 		public struct SDL_DollarGestureEvent
 		{
-			public UInt32 type;
+			public SDL_EventType type;
 			public UInt32 timestamp;
 			public Int64 touchId; // SDL_TouchID
 			public Int64 gestureId; // SDL_GestureID
@@ -5332,7 +5341,7 @@ namespace SDL2
 		[StructLayout(LayoutKind.Sequential)]
 		public struct SDL_UserEvent
 		{
-			public UInt32 type;
+			public SDL_EventType type;
 			public UInt32 timestamp;
 			public UInt32 windowID;
 			public Int32 code;
@@ -5438,6 +5447,15 @@ namespace SDL2
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
 		public static extern int SDL_PeepEvents(
 			[Out] SDL_Event[] events,
+			int numevents,
+			SDL_eventaction action,
+			SDL_EventType minType,
+			SDL_EventType maxType
+		);
+
+		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+		public static extern unsafe int SDL_PeepEvents(
+			SDL_Event* events,
 			int numevents,
 			SDL_eventaction action,
 			SDL_EventType minType,
@@ -6489,6 +6507,16 @@ namespace SDL2
 		/* Only available in 2.0.10 or higher. */
 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
 		public static extern SDL_TouchDeviceType SDL_GetTouchDeviceType(Int64 touchID);
+
+		/* Only available in 2.0.22 or higher. */
+		[DllImport(nativeLibName, EntryPoint = "SDL_GetTouchName", CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr INTERNAL_SDL_GetTouchName(int index);
+
+		/* Only available in 2.0.22 or higher. */
+		public static string SDL_GetTouchName(int index)
+		{
+			return UTF8_ToManaged(INTERNAL_SDL_GetTouchName(index));
+		}
 
 		#endregion
 
