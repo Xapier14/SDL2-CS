@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 		<Platforms>AnyCPU</Platforms>
@@ -32,12 +32,5 @@
 	<!-- Exclude the project from analysis -->
 		<SonarQubeExclude>true</SonarQubeExclude>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<PackageId>Cerulean.$(AssemblyName)</PackageId>
-		<Title>Cerulean.SDL2-CS</Title>
-		<Authors>flibitijibibo, Xapier14</Authors>
-		<IncludeSymbols>True</IncludeSymbols>
-		<SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
-		<PackageLicenseExpression>zlib</PackageLicenseExpression>
-		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 	</PropertyGroup>
 </Project>
