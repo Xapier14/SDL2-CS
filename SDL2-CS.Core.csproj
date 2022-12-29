@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0</TargetFrameworks>
-		<Platforms>AnyCPU</Platforms>
+		<TargetFrameworks>net6</TargetFrameworks>
+		<Platforms>x86;x64</Platforms>
 	</PropertyGroup>
 	<PropertyGroup>
 		<EnableDefaultItems>false</EnableDefaultItems>
@@ -19,14 +19,23 @@
 		<Message Importance="High" Text="Loaded property overrides from '$(SDLSettingsPropsFilePath)'" Condition="Exists('$(SDLSettingsPropsFilePath)')" />
 	</Target>	
 	<ItemGroup>
+		<Compile Include="src\DllMap.cs" />
 		<Compile Include="src\SDL2.cs" />
 		<Compile Include="src\SDL2_gfx.cs" />
 		<Compile Include="src\SDL2_image.cs" />
 		<Compile Include="src\SDL2_mixer.cs" />
 		<Compile Include="src\SDL2_ttf.cs" />
-	</ItemGroup>
+	</ItemGroup>	
 	<ItemGroup>
-		<None Include="app.config" />
+	  <Content Include="DllMap.xml">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>	
+	<ItemGroup>
+		<ContentWithTargetPath Include="lib\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
+		</ContentWithTargetPath>
 	</ItemGroup>
 	<PropertyGroup>
 	<!-- Exclude the project from analysis -->
