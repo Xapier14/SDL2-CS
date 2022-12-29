@@ -36,8 +36,8 @@
 		<Title>Cerulean.SDL2-CS</Title>
 		<Authors>flibitijibibo, Xapier14</Authors>
 		<IncludeSymbols>True</IncludeSymbols>
-		<SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
-		<PackageLicenseExpression>zlib</PackageLicenseExpression>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageLicenseExpression>Zlib</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 	</PropertyGroup>
 </Project>
